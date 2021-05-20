@@ -226,7 +226,7 @@ yes | sudo -u "$name" $AurHelper -S libxft-bgra-git >/dev/null 2>&1
 
 # Install the dotfiles in the user's home directory
 PutGitRepo "$DotFilesRepo" "/home/$name" "$RepoBranch"
-rm -f "/home/$name/README.md" "/home/$name/.editorconfig" "/home/$name/.gitignore" "/home/$name/.gitmodules"
+rm -f "/home/$name/README.md" "/home/$name/.editorconfig" "/home/$name/.gitignore" "/home/$name/.gitmodules" "/home/$name/.git"
 # Create default urls file if none exists.
 [ ! -f "/home/$name/.config/newsboat/urls" ] && echo "https://www.archlinux.org/feeds/news/" > "/home/$name/.config/newsboat/urls"
 
