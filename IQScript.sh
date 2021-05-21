@@ -9,8 +9,8 @@ while getopts ":a:r:b:p:h" o; do case "${o}" in
 	*) printf "Invalid option: -%s\\n" "$OPTARG" && exit 1 ;;
 esac done
 
-[ -z "$DotFilesRepo" ] && DotFilesRepo="https://github.com/IntelligentQuantum/IQ-DotFiles.git"
-[ -z "$ProgramsFile" ] && ProgramsFile="https://raw.githubusercontent.com/IntelligentQuantum/IQ-IS/main/Programs.csv"
+[ -z "$DotFilesRepo" ] && DotFilesRepo="https://github.com/IntelligentQuantum/IQDotFiles.git"
+[ -z "$ProgramsFile" ] && ProgramsFile="https://raw.githubusercontent.com/IntelligentQuantum/IQScript/main/Programs.csv"
 [ -z "$AurHelper" ] && AurHelper="yay"
 [ -z "$RepoBranch" ] && RepoBranch="main"
 
@@ -50,7 +50,7 @@ GetUserAndPass()
 CheckUser()
 { \
 	! { id -u "$name" >/dev/null 2>&1; } ||
-	dialog --colors --title "WARNING!" --yes-label "CONTINUE" --no-label "No wait..." --yesno "The user \`$name\` already exists on this system. IQ-IS can install for a user already existing, but it will \\Zboverwrite\\Zn any conflicting settings/dotfiles on the user account.\\n\\nIQ-IS will \\Zbnot\\Zn overwrite your user files, documents, videos, etc., so don't worry about that, but only click <CONTINUE> if you don't mind your settings being overwritten.\\n\\nNote also that IQ-IS will change $name's password to the one you just gave." 14 70
+	dialog --colors --title "WARNING!" --yes-label "CONTINUE" --no-label "No wait..." --yesno "The user \`$name\` already exists on this system. IQScript can install for a user already existing, but it will \\Zboverwrite\\Zn any conflicting settings/dotfiles on the user account.\\n\\nIQScript will \\Zbnot\\Zn overwrite your user files, documents, videos, etc., so don't worry about that, but only click <CONTINUE> if you don't mind your settings being overwritten.\\n\\nNote also that IQScript will change $name's password to the one you just gave." 14 70
 }
 
 PreInstallMessage()
@@ -79,8 +79,8 @@ RefreshKeys()
 NewPermissions()
 {
     # Set special sudoers settings for install (or after).
-	sed -i "/#IQ-IS/d" /etc/sudoers
-	echo "$* #IQ-IS" >> /etc/sudoers;
+	sed -i "/#IQScript/d" /etc/sudoers
+	echo "$* #IQScript" >> /etc/sudoers;
 }
 
 ManualInstall()
@@ -100,7 +100,7 @@ ManualInstall()
 MainInstall()
 {
     # Installs all needed programs from main repo.
-	dialog --title "IQ-IS Installation" --infobox "Installing \`$1\` ($n of $total). $1 $2" 5 70
+	dialog --title "IQScript Installation" --infobox "Installing \`$1\` ($n of $total). $1 $2" 5 70
 	InstallPKG "$1"
 }
 
@@ -108,7 +108,7 @@ GitMakeInstall()
 {
 	progname="$(basename "$1" .git)"
 	dir="$repodir/$progname"
-	dialog --title "IQ-IS Installation" --infobox "Installing \`$progname\` ($n of $total) via \`git\` and \`make\`. $(basename "$1") $2" 5 70
+	dialog --title "IQScript Installation" --infobox "Installing \`$progname\` ($n of $total) via \`git\` and \`make\`. $(basename "$1") $2" 5 70
 	sudo -u "$name" git clone --depth 1 "$1" "$dir" >/dev/null 2>&1 || { cd "$dir" || return 1 ; sudo -u "$name" git pull --force origin main;}
 	cd "$dir" || exit 1
 	make >/dev/null 2>&1
@@ -118,14 +118,14 @@ GitMakeInstall()
 
 AurInstall()
 { \
-	dialog --title "IQ-IS Installation" --infobox "Installing \`$1\` ($n of $total) from the AUR. $1 $2" 5 70
+	dialog --title "IQScript Installation" --infobox "Installing \`$1\` ($n of $total) from the AUR. $1 $2" 5 70
 	echo "$aurinstalled" | grep -q "^$1$" && return 1
 	sudo -u "$name" $AurHelper -S --noconfirm "$1" >/dev/null 2>&1
 }
 
 PipInstall()
 { \
-	dialog --title "IQ-IS Installation" --infobox "Installing the Python package \`$1\` ($n of $total). $1 $2" 5 70
+	dialog --title "IQScript Installation" --infobox "Installing the Python package \`$1\` ($n of $total). $1 $2" 5 70
 	[ -x "$(command -v "pip")" ] || InstallPKG python-pip >/dev/null 2>&1
 	yes | pip install "$1"
 }
@@ -168,7 +168,6 @@ SystemBeepOff()
 
 Finalize()
 { \
-	mkdir ~/Pictures/Screenshot
 	dialog --infobox "Preparing welcome message..." 4 50
 	dialog --title "All done!" --msgbox "Congrats! Provided there were no hidden errors, the script completed successfully and all the programs and configuration files should be in place.\\n\\nTo run the new graphical environment, log out and log back in as your new user, then run the command \"startx\" to start the graphical environment (it will start automatically in tty1).\\n\\n.t IntelligentQuantum" 12 80
 }
@@ -192,11 +191,11 @@ PreInstallMessage || Error "User exited."
 RefreshKeys || Error "Error automatically refreshing Arch keyring. Consider doing so manually."
 
 for x in curl base-devel git ntp zsh; do
-	dialog --title "IQ-IS Installation" --infobox "Installing \`$x\` which is required to install and configure other programs." 5 70
+	dialog --title "IQScript Installation" --infobox "Installing \`$x\` which is required to install and configure other programs." 5 70
 	InstallPKG "$x"
 done
 
-dialog --title "IQ-IS Installation" --infobox "Synchronizing system time to ensure successful and secure installation of software..." 4 70
+dialog --title "IQScript Installation" --infobox "Synchronizing system time to ensure successful and secure installation of software..." 4 70
 ntpdate 0.us.pool.ntp.org >/dev/null 2>&1
 
 AddUserAndPass || Error "Error adding username and/or password."
@@ -222,7 +221,7 @@ ManualInstall $AurHelper || Error "Failed to install AUR helper."
 # and all build dependencies are installed.
 InstallationLoop
 
-dialog --title "IQ-IS Installation" --infobox "Finally, installing \`libxft-bgra\` to enable color emoji in suckless software without crashes." 5 70
+dialog --title "IQScript Installation" --infobox "Finally, installing \`libxft-bgra\` to enable color emoji in suckless software without crashes." 5 70
 yes | sudo -u "$name" $AurHelper -S libxft-bgra-git >/dev/null 2>&1
 
 # Install the dotfiles in the user's home directory
@@ -260,11 +259,12 @@ killall pulseaudio; sudo -u "$name" pulseaudio --start
 
 # This line, overwriting the `NewPermissions` command above will allow the user to run
 # several important commands, `shutdown`, `reboot`, updating, etc. without a password.
-NewPermissions "%wheel ALL=(ALL) ALL #IQ-IS
+NewPermissions "%wheel ALL=(ALL) ALL #IQScript
 %wheel ALL=(ALL) NOPASSWD: /usr/bin/shutdown,/usr/bin/reboot,/usr/bin/systemctl suspend,/usr/bin/wifi-menu,/usr/bin/mount,/usr/bin/umount,/usr/bin/pacman -Syu,/usr/bin/pacman -Syyu,/usr/bin/packer -Syu,/usr/bin/packer -Syyu,/usr/bin/systemctl restart NetworkManager,/usr/bin/rc-service NetworkManager restart,/usr/bin/pacman -Syyu --noconfirm,/usr/bin/loadkeys,/usr/bin/yay,/usr/bin/pacman -Syyuw --noconfirm"
 
 xdg-user-dirs-update
 
 # Last message! Install complete!
 Finalize
+mkdir ~/Pictures/Screenshot
 clear
